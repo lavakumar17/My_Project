@@ -1,0 +1,166 @@
+[33mcommit b4e3260210183828240a23c735da674cc6c18377[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: lavakumar17 <lavakumar178>
+Date:   Tue Jul 1 07:37:18 2025 -0700
+
+    all files commiting
+
+[1mdiff --git a/Desktop - Shortcut.lnk b/Desktop - Shortcut.lnk[m
+[1mnew file mode 100644[m
+[1mindex 0000000..35e2997[m
+Binary files /dev/null and b/Desktop - Shortcut.lnk differ
+[1mdiff --git a/add.txt b/add.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
+[1mdiff --git a/go.mod b/go.mod[m
+[1mnew file mode 100644[m
+[1mindex 0000000..21dd7b4[m
+[1m--- /dev/null[m
+[1m+++ b/go.mod[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32mmodule Rest_Api[m
+[32m+[m
+[32m+[m[32mgo 1.22.5[m
+[32m+[m
+[32m+[m[32mrequire github.com/gorilla/mux v1.8.1 // indirect[m
+[1mdiff --git a/go.sum b/go.sum[m
+[1mnew file mode 100644[m
+[1mindex 0000000..7128337[m
+[1m--- /dev/null[m
+[1m+++ b/go.sum[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32mgithub.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=[m
+[32m+[m[32mgithub.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=[m
+[1mdiff --git a/hell.txt b/hell.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
+[1mdiff --git a/hell1.txt b/hell1.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
+[1mdiff --git a/main.exe b/main.exe[m
+[1mnew file mode 100644[m
+[1mindex 0000000..98a10fc[m
+Binary files /dev/null and b/main.exe differ
+[1mdiff --git a/main.go b/main.go[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ff31c4e[m
+[1m--- /dev/null[m
+[1m+++ b/main.go[m
+[36m@@ -0,0 +1,115 @@[m
+[32m+[m[32mpackage main[m
+[32m+[m
+[32m+[m[32mimport ([m
+[32m+[m	[32m"encoding/json"[m
+[32m+[m	[32m"log"[m
+[32m+[m	[32m"math/rand"[m
+[32m+[m	[32m"net/http"[m
+[32m+[m	[32m"strconv"[m
+[32m+[m
+[32m+[m	[32m"github.com/gorilla/mux"[m
+[32m+[m[32m)[m
+[32m+[m
+[32m+[m[32m// Book struct (Model)[m
+[32m+[m[32mtype Book struct {[m
+[32m+[m	[32mID     string  `json:"id"`[m
+[32m+[m	[32mIsbn   string  `json:"isbn"`[m
+[32m+[m	[32mTitle  string  `json:"title"`[m
+[32m+[m	[32mAuthor *Author `json:"author"`[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Author struct[m
+[32m+[m[32mtype Author struct {[m
+[32m+[m	[32mFirstname string `json:"firstname"`[m
+[32m+[m	[32mLastname  string `json:"lastname"`[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Init books var as a slice Book struct[m
+[32m+[m[32mvar books []Book[m
+[32m+[m
+[32m+[m[32m// Get all books[m
+[32m+[m[32mfunc getBooks(w http.ResponseWriter, r *http.Request) {[m
+[32m+[m	[32mw.Header().Set("Content-Type", "application/json")[m
+[32m+[m	[32mjson.NewEncoder(w).Encode(books)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Get single book[m
+[32m+[m[32mfunc getBook(w http.ResponseWriter, r *http.Request) {[m
+[32m+[m	[32mw.Header().Set("Content-Type", "application/json")[m
+[32m+[m	[32mparams := mux.Vars(r) // Gets params[m
+[32m+[m	[32m// Loop through books and find one with the id from the params[m
+[32m+[m	[32mfor _, item := range books {[m
+[32m+[m		[32mif item.ID == params["id"] {[m
+[32m+[m			[32mjson.NewEncoder(w).Encode(item)[m
+[32m+[m			[32mreturn[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m	[32mjson.NewEncoder(w).Encode(&Book{})[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Add new book[m
+[32m+[m[32mfunc createBook(w http.ResponseWriter, r *http.Request) {[m
+[32m+[m	[32mw.Header().Set("Content-Type", "application/json")[m
+[32m+[m	[32mvar book Book[m
+[32m+[m	[32m_ = json.NewDecoder(r.Body).Decode(&book)[m
+[32m+[m	[32mbook.ID = strconv.Itoa(rand.Intn(100000000)) // Mock ID - not safe[m
+[32m+[m	[32mbooks = append(books, book)[m
+[32m+[m	[32mjson.NewEncoder(w).Encode(book)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Update book[m
+[32m+[m[32mfunc updateBook(w http.ResponseWriter, r *http.Request) {[m
+[32m+[m	[32mw.Header().Set("Content-Type", "application/json")[m
+[32m+[m	[32mparams := mux.Vars(r)[m
+[32m+[m	[32mfor index, item := range books {[m
+[32m+[m		[32mif item.ID == params["id"] {[m
+[32m+[m			[32mbooks = append(books[:index], books[index+1:]...)[m
+[32m+[m			[32mvar book Book[m
+[32m+[m			[32m_ = json.NewDecoder(r.Body).Decode(&book)[m
+[32m+[m			[32mbook.ID = params["id"][m
+[32m+[m			[32mbooks = append(books, book)[m
+[32m+[m			[32mjson.NewEncoder(w).Encode(book)[m
+[32m+[m			[32mreturn[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Delete book[m
+[32m+[m[32mfunc deleteBook(w http.ResponseWriter, r *http.Request) {[m
+[32m+[m	[32mw.Header().Set("Content-Type", "application/json")[m
+[32m+[m	[32mparams := mux.Vars(r)[m
+[32m+[m	[32mfor index, item := range books {[m
+[32m+[m		[32mif item.ID == params["id"] {[m
+[32m+[m			[32mbooks = append(books[:index], books[index+1:]...)[m
+[32m+[m			[32mbreak[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m	[32mjson.NewEncoder(w).Encode(books)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Main function[m
+[32m+[m[32mfunc main() {[m
+[32m+[m	[32m// Init router[m
+[32m+[m	[32mr := mux.NewRouter()[m
+[32m+[m
+[32m+[m	[32m// Hardcoded data - @todo: add database[m
+[32m+[m	[32mbooks = append(books, Book{ID: "1", Isbn: "438227", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})[m
+[32m+[m	[32mbooks = append(books, Book{ID: "2", Isbn: "454555", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})[m
+[32m+[m
+[32m+[m	[32m// Route handles & endpoints[m
+[32m+[m	[32mr.HandleFunc("/books", getBooks).Methods("GET")[m
+[32m+[m	[32mr.HandleFunc("/books/{id}", getBook).Methods("GET")[m
+[32m+[m	[32mr.HandleFunc("/books", createBook).Methods("POST")[m
+[32m+[m	[32mr.HandleFunc("/books/{id}", updateBook).Methods("PUT")[m
+[32m+[m	[32mr.HandleFunc("/books/{id}", deleteBook).Methods("DELETE")[m
+[32m+[m
+[32m+[m	[32m// Start server[m
+[32m+[m	[32mlog.Fatal(http.ListenAndServe(":8080", r))[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// Request sample[m
+[32m+[m[32m// {[m
+[32m+[m[32m// 	"isbn":"4545454",[m
+[32m+[m[32m// 	"title":"Book Three",[m
+[32m+[m[32m// 	"author":{"firstname":"Harry","lastname":"White"}[m
+[32m+[m[32m// }[m
+[1mdiff --git a/sum.txt b/sum.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
